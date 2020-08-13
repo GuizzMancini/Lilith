@@ -1,0 +1,834 @@
+from tkinter import *
+from tkinter import ttk
+import os
+import random
+from random import randint
+from time import sleep
+
+print('-'*70)
+print("Olá, eu me chamo Lilith, estou aqui para te ajudar!")
+print('-'*70)
+
+nome = input('Como devo te chamar? ')
+print('-'*70)
+
+while True:
+
+    print('{}, escolha uma das minhas funções: '.format(nome))
+    print("""
+    [ 1 ] Paint - Game [para utilizar, selecione o paint e feche tudo]
+    [ 2 ] Média Aritmética - Utilitários
+    [ 3 ] Tabuada - Utilitários 
+    [ 4 ] Adivinhação - Game 
+    [ 5 ] Jokempo - Game
+    [ 6 ] Par ou Ímpar - Game
+    [ 7 ] Jogo da Velha - Game - com defeitos
+    [ 8 ] Conversor de Moedas - Utilitários
+    [ 9 ] Calculadora de Idade - Utilitários 
+    [ 10 ] Aventura Simples - Game""")
+    print('-'*70)
+
+    funcao = input('Insira o número da função que você quer executar. '.format(nome))
+    print('-'*70)
+
+
+    if funcao == '1':
+        while True:
+            root = Tk()
+
+            root.title('LILITH PAINT')
+
+            v = ttk.Scrollbar(root, orient=VERTICAL)
+            h = ttk.Scrollbar(root, orient=HORIZONTAL)
+
+            canvas = Canvas(root, scrollregion=(0, 0, 1000, 1000),
+                            yscrollcommand=v.set, xscrollcommand=h.set)
+            h['command'] = canvas.xview
+            v['command'] = canvas.yview
+
+            ttk.Sizegrip(root).grid(column=1, row=1, sticky=(S, E))
+
+            canvas.grid(column=0, row=0, sticky=(N, W, E, S))
+            h.grid(column=0, row=1, sticky=(W, E))
+            v.grid(column=1, row=0, sticky=(N, S))
+            root.grid_columnconfigure(0, weight=1)
+            root.grid_rowconfigure(0, weight=1)
+
+            lastx, lasty = 0, 0
+
+
+            def xy(event):
+                global lastx, lasty
+                lastx, lasty = canvas.canvasx(event.x), canvas.canvasy(event.y)
+
+
+            def setColor(newcolor):
+                global color
+                color = newcolor
+                canvas.dtag('all', "paletteSelected")
+                canvas.itemconfigure('palette', outline='white')
+                canvas.addtag('paletteSelected', 'withtag', 'palette%s' % color)
+                canvas.itemconfigure('paletteSelected', outline='#999999')
+
+
+            def addLine(event):
+                global lastx, lasty
+                x, y = canvas.canvasx(event.x), canvas.canvasy(event.y)
+                canvas.create_line((lastx, lasty, x, y), fill=color, width=5, tags='currentline')
+                lastx, lasty = x, y
+
+
+            def doneStroke(event):
+                canvas.itemconfigure('currentline', width=1)
+
+
+            canvas.bind("<Button-1>", xy)
+            canvas.bind("<B1-Motion>", addLine)
+            canvas.bind("<B1-ButtonRelease>", doneStroke)
+
+            id = canvas.create_rectangle((10, 10, 30, 30), fill='red', tags=('palette', 'palettered'))
+            canvas.tag_bind(id, '<Button-1>', lambda x: setColor('red'))
+
+            id = canvas.create_rectangle((10, 35, 30, 55), fill='blue', tags=('palette', 'paletteblue'))
+            canvas.tag_bind(id, '<Button-1>', lambda x: setColor('blue'))
+
+            id = canvas.create_rectangle((10, 60, 30, 80), fill='yellow', tags=('palette', 'paletteyellow'))
+            canvas.tag_bind(id, '<Button-1>', lambda x: setColor('yellow'))
+
+            id = canvas.create_rectangle((10, 85, 30, 105), fill='purple', tags=('palette', 'palettepurple'))
+            canvas.tag_bind(id, '<Button-1>', lambda x: setColor('purple'))
+
+            id = canvas.create_rectangle((10, 110, 30, 130), fill='pink', tags=('palette', 'palettepink'))
+            canvas.tag_bind(id, '<Button-1>', lambda x: setColor('pink'))
+
+            id = canvas.create_rectangle((10, 135, 30, 155), fill='green', tags=('palette', 'palettegreen'))
+            canvas.tag_bind(id, '<Button-1>', lambda x: setColor('green'))
+
+            id = canvas.create_rectangle((10, 160, 30, 180), fill='black', tags=('palette', 'paletteblack'))
+            canvas.tag_bind(id, '<Button-1>', lambda x: setColor('black'))
+
+            setColor('black')
+            canvas.itemconfigure('palette', width=5)
+
+
+            opcao_func1 = input('Digite 1 para reiniciar e 2 para sair ')
+            if opcao_func1 == '1':
+                continue
+            elif opcao_func1 == '2':
+                break
+            else:
+                print('Opção Inválida!')
+
+    if funcao == '2':
+        while True:
+            print('-' * 70)
+
+            approved = float(input('Para começar, qual é a média de aprovação da sua escola? '))
+            print('-' * 70)
+
+            nota1 = float(input('Ok {}, qual foi a sua nota no primeiro bimestre? '.format(nome)))
+            print('-' * 70)
+
+            nota2 = float(input('Agora me informe a sua nota no segundo bimestre '))
+            print('-' * 70)
+
+            nota3 = float(input('No terceiro '))
+            print('-' * 70)
+
+            nota4 = float(input('E no último bimestre? '))
+            print('-' * 70)
+
+            media = (nota1 + nota2 + nota3 + nota4) / 4
+            print('Tudo certo {}, você atingiu a nota final de {}.'.format(nome, media))
+
+            if media >= approved:
+                print('Você passou!')
+            else:
+                print('Ficou pra trás, trouxa')
+            print('-'*70)
+
+            opcao_func2 = input('Digite 1 para reiniciar e 2 para sair ')
+            if opcao_func2 == '1':
+                continue
+            elif opcao_func2 == '2':
+                break
+            else:
+                print('Opção Inválida!')
+
+    if funcao == '3':
+        while True:
+            print('-' * 70)
+            num = int(input('Insira o número para a tabuada '))
+            for c in range(1, 21):
+                print(f'{num} x {c} = {num*c}')
+            print('-'*70)
+
+            opcao_func3 = input('Digite 1 para reiniciar e 2 para sair ')
+            if opcao_func3 == '1':
+                continue
+            elif opcao_func3 == '2':
+                break
+            else:
+                print('Opção Inválida!')
+
+    if funcao == '4':
+        while True:
+            computador = randint(0, 10)
+
+            print('Eu pensei em um número entre 0 e 10')
+            print('Você é brabo pra adivinhar qual foi? ')
+
+            acertou = False
+            palpites = 0
+            while not acertou:
+                jogador = int(input('Qual é o seu palpite? '))
+                palpites += 1
+                if jogador == computador:
+                    acertou = True
+                else:
+                    if jogador < computador:
+                        print('Quase, um pouco mais... ')
+                    elif jogador > computador:
+                        print('Quase, um pouco menos... ')
+            print('Você acertou! ({} tentativas)'.format(palpites))
+            print('-'*70)
+
+            opcao_func4 = input('Digite 1 para reiniciar e 2 para sair ')
+            if opcao_func4 == '1':
+                continue
+            elif opcao_func4 == '2':
+                break
+            else:
+                print('Opção Inválida!')
+
+    if funcao == '5':
+        while True:
+            print('-'*70)
+
+            itens = ('Pedra', 'Papel', 'Tesoura')
+            lilith = randint(0, 2)
+            print("""Suas opções:
+            [ 0 ] PEDRA
+            [ 1 ] PAPEL
+            [ 2 ] TESOURA""")
+            print('-='*20)
+
+            player = int(input('Qual é a sua jogada? '))
+            print('-='*20)
+
+            print('JO')
+            sleep(1)
+            print('KEN')
+            sleep(1)
+            print('PO!')
+            print('-='*20)
+
+            print('Lilith jogou {}'.format(itens[lilith]))
+            print('Você jogou {}'.format(itens[player]))
+            print('-='*20)
+
+            if lilith == 0: #computador jogou PEDRA
+                if player == 0:
+                    print('EMPATE ')
+                elif player == 1:
+                    print('VOCÊ VENCEU! ')
+                elif player == 2:
+                    print('LILITH VENCEU! ')
+                else:
+                    print('JOGADA INVÁLIDA! ')
+
+            elif lilith == 1: #computador jogou PAPEL
+                if player == 0:
+                    print('LILITH VENCEU! ')
+                elif player == 1:
+                    print('EMPATE ')
+                elif player == 2:
+                    print('VOCÊ VENCEU! ')
+                else:
+                    print('JOGADA INVÁLIDA! ')
+
+            elif lilith == 2: #computador jogou TESOURA
+                if player == 0:
+                    print('VOCÊ VENCEU! ')
+                elif player == 1:
+                    print('LILITH VENCEU! ')
+                elif player == 2:
+                    print('EMPATE ')
+                else:
+                    print('JOGADA INVÁLIDA! ')
+
+                print('-'*70)
+
+            opcao_func5 = input('Digite 1 para reiniciar e 2 para sair ')
+            if opcao_func5 == '1':
+                continue
+            elif opcao_func5 == '2':
+                break
+            else:
+                print('Opção Inválida!')
+
+    if funcao == '6':
+        v = 0
+        while True:
+            player2 = int(input('Digite um valor: '))
+            lilith2 = randint(0,10)
+            total = player2 + lilith2
+            tipo = ' '
+            while tipo not in 'PI':
+                tipo = str(input('Par ou ímpar? [P/I] ')).strip().upper()[0]
+                print('-='*20)
+
+                print('PAR')
+                sleep(1)
+                print('OU')
+                sleep(1)
+                print('IMPAR')
+
+            print(f'Você jogou {player2} e Lilith {lilith2}. Total de {total}.')
+            print('-='*20)
+            if tipo == 'P':
+                if total % 2 == 0:
+                    print('Você VENCEU!')
+                    v += 1
+                    print('-='*20)
+                else:
+                    print('Você PERDEU!')
+                    break
+                    print('-=' * 20)
+
+            elif tipo == 'I':
+                if total % 2 == 1:
+                    print('Você VENCEU!')
+                    v +=1
+                    print('-=' * 20)
+                else:
+                    print('Você PERDEU!')
+                    break
+                    print('-=' * 20)
+            print('Vamos jogar novamente...')
+        print(f'Game Over! Você venceu {v} vezes.')
+
+    if funcao == '7':
+        while True:
+            print('*Você é X, e Lilith é O*')
+            print('*Ao selecionar uma posição, o tabuleiro irá reiniciar...*')
+
+            jogarNovamente='s'
+            jogadas=0
+            quemJoga=2 #1=CPU - #2=player
+            maxJogadas=9
+            vit='n'
+            velha=[
+                [" ", " ", " "], #Linha:0 Coluna:0   -   Linha:0 Coluna:1   -   Linha:0 Coluna:2
+                [" ", " ", " "], #Linha:1 Coluna:0   -   Linha:1 Coluna:1   -   Linha:1 Coluna:2
+                [" ", " ", " "]  #Linha:2 Coluna:0   -   Linha:2 Coluna:1   -   Linha:2 Coluna:2
+            ]
+
+            def tela():
+                global velha
+                global jogadas
+                os.system('cls')
+                print("    0   1   2")
+                print("0:  " + velha[0][0] + " | " + velha[0][1] + " | " + velha[0][2])
+                print("   -----------")
+                print("1:  " + velha[1][0] + " | " + velha[1][1] + " | " + velha[1][2])
+                print("   -----------")
+                print("2:  " + velha[2][0] + " | " + velha[2][1] + " | " + velha[2][2])
+                print("Jogadas: " + str(jogadas))
+
+            def jogadorJoga():
+                global jogadas
+                global quemJoga
+                global maxJogadas
+                if quemJoga == 2 and jogadas<maxJogadas:
+                    try:
+                        l = int(input("Linha..: "))
+                        c = int(input("Coluna..: "))
+                        print(" ")
+                        while velha[l][c] != " ":
+                            l = int(input("Linha..: "))
+                            c = int(input("Coluna..: "))
+                            print(' ')
+                        velha[l][c] = "X"
+                        quemJoga=1
+                        jogadas+=1
+                    except:
+                        print("Jogada inválida")
+                        os.system("pause")
+                        #vit = 'n'
+
+            def cpuJoga():
+                global jogadas
+                global quemJoga
+                global maxJogadas
+                if quemJoga == 1 and jogadas < maxJogadas:
+                    l = random.randrange(0, 3)
+                    c = random.randrange(0, 3)
+                    while velha[l][c] != " ":
+                        l = random.randrange(0, 3)
+                        c = random.randrange(0, 3)
+                    velha[l][c]='O'
+                    jogadas += 1
+                    quemJoga = 2
+
+            def verificarVitoria():
+                global velha
+                vitoria = "n"
+                simbolos = ["X", "O"]
+                for s in simbolos:
+                    vitoria = "n"
+
+
+                    #Verificar linhas
+                    il=ic=0
+                    while il<3:
+                        soma=0
+                        ic=0
+                        while ic<3:
+                            if(velha[il][ic]==s):
+                                soma += 1
+                            ic += 1
+                        if(soma==3):
+                            vitoria = s
+                            break
+                        il += 1
+                    if(vitoria!="n"):
+                        break
+
+
+                    # Verificar colunas
+                    il=ic=0
+                    while ic<3:
+                        soma=0
+                        il=0
+                        while il<3:
+                            if(velha[il][ic]==s):
+                                soma += 1
+                            il += 1
+                        if(soma==3):
+                            vitoria = s
+                            break
+                        ic += 1
+                    if(vitoria!="n"):
+                        break
+
+
+                    #Verificar Diagonal 1
+                    soma = 0
+                    idiag = 0
+                    while idiag<3:
+                        if(velha[idiag][idiag]==s):
+                            soma += 1
+                        idiag += 1
+                    if(soma==3):
+                        vitoria = s
+                        break
+
+
+                    #Verificar Diagonal 2
+                    soma = 0
+                    idiagl = 0
+                    idiagc = 2
+                    while idiagc>=0:
+                        if(velha[idiagl][idiagc]==s):
+                            soma += 1
+                        idiagl += 1
+                        idiagc -= 1
+                    if(soma==3):
+                        vitoria = s
+                        break
+                return vitoria
+
+            def redefinir():
+                global velha
+                global jogadas
+                global quemJoga
+                global maxJogadas
+                global vit
+                jogadas = 0
+                quemJoga = 2  # 1=CPU - #2=player
+                maxJogadas = 9
+                vit = 'n'
+                velha = [
+                    [" ", " ", " "],  # Linha:0 Coluna:0   -   Linha:0 Coluna:1   -   Linha:0 Coluna:2
+                    [" ", " ", " "],  # Linha:1 Coluna:0   -   Linha:1 Coluna:1   -   Linha:1 Coluna:2
+                    [" ", " ", " "]  # Linha:2 Coluna:0   -   Linha:2 Coluna:1   -   Linha:2 Coluna:2
+                ]
+
+            while True:
+                tela()
+                jogadorJoga()
+                cpuJoga()
+                tela()
+                vit = verificarVitoria()
+                if(vit!="n")or(jogadas>=maxJogadas):
+                    break
+
+
+            opcao_func7 = input('Digite 1 para reiniciar e 2 para sair ')
+            if opcao_func7 == '1':
+                continue
+            elif opcao_func7 == '2':
+                break
+            else:
+                print('Opção Inválida!')
+
+    if funcao == '8':
+        while True:
+            print('-'*70)
+            DorR = input('Você quer comprar dólares, reais ou euros? ')
+            print('')
+            if DorR == "dólares":
+                real = float(input(f'Certo {nome}, quanto você tem na carteira? R$'))
+                dolar = real / 5.23
+                print(f'Com R${real:.2f}, você pode comprar US${dolar:.2f}')
+                print('')
+            elif DorR == 'reais':
+                dolar = float(input(f'Certo {nome}, quanto você tem na carteira? US$'))
+                real = dolar * 5.23
+                print(f'Com US${dolar:.2f}, você pode comprar R${real:.2f}')
+                print('')
+            elif DorR == 'euros':
+                real2 = float(input(f'Certo {nome}, quanto você tem na carteira? R$'))
+                euro = real2 / 6.09
+                print(f'Com R${real2:.2f}, você pode comprar £{euro:.2f}')
+                print('')
+            else:
+                print('Mensagem Inválida, digite: reais ou dólares...')
+                opcao_func3 = input('Digite 1 para reiniciar e 2 para sair ')
+                if opcao_func3 == '1':
+                    continue
+                elif opcao_func3 == '2':
+                    break
+                else:
+                    print('Opção Inválida!')
+
+            opcao_func3 = input('Digite 1 para reiniciar e 2 para sair ')
+            if opcao_func3 == '1':
+                continue
+            elif opcao_func3 == '2':
+                break
+            else:
+                print('Opção Inválida!')
+
+    if funcao == '9':
+        while True:
+            print('-' * 70)
+
+            ano_atual = 2020
+            print('-'*70)
+
+            nascimento = int(input('Insira o ano em que você nasceu: '))
+            print('-'*70)
+
+            result = (ano_atual - nascimento)
+
+            print(f"Você tem {result} anos!")
+            print('-'*70)
+
+            if result<=14:
+                print('Você ainda tem muito a viver!')
+            elif result<=18:
+                print('Ja está na hora de você arrumar alguma coisa para fazer!')
+            elif result<=25:
+                print('Você está nos seus melhores anos, haha!')
+            elif result<=30:
+                print('Você está ficando velho!')
+            elif result<=50:
+                print('A idade chegou né?')
+            elif result>=60:
+                print('É melhor você providenciar seu testamento...')
+
+            opcao_func9 = input('Digite 1 para reiniciar e 2 para sair ')
+            if opcao_func9 == '1':
+                continue
+            elif opcao_func9 == '2':
+                break
+            else:
+                print('Opção Inválida!')
+
+    if funcao == '10':
+        while True:
+            print('-'*70)
+            starthis = input(f'{nome}, está pronto para começar sua aventura? ')
+            print('')
+            print('Você está numa jornada em busca da espada perdida do Arcanjo Gabriel.')
+            print('Após muita pesquisa, você encontra o lugar onde a espada está escondida! O local é uma tumba, dentro de uma floresta!')
+            print('Ao entrar na floresta você se depara com um baú de madeira.')
+            print('')
+            print('O que você faz?')
+            print('Abrir o baú [1]')
+            print('Proseeguir o seu caminho [2]')
+            choice1 = input('_INSIRA O NÚMERO CORRESPONDENTE A SUA ESCOLHA_ ')
+            print('')
+            if choice1 == '1':
+                print('Ao abrir o baú, você se depara com algumas aranhas e um tentador machado.')
+                print('')
+                print('O que você faz?')
+                print('Pegar o machado [1]')
+                print('Seguir caminho [2]')
+                choice2 = input(' ')
+                print('')
+                if choice2 == '1':
+                    print('Você pega o machado e de cara, sente uma energia poderosa emanando dele!')
+                    print('Você continua andando, até chegar a uma encruzilhada.')
+                    print('')
+                    print('O que você faz?')
+                    print('Seguir pelo caminho à direita [1]')
+                    print('Seguir pelo caminho à esquerda [2]')
+                    choice4 = input(' ')
+                    print('')
+                    if choice4 == '1':
+                        print('Você segue pela direita, mas se depara com uma cobra venenosa!!!')
+                        print('')
+                        print('O que você faz?')
+                        print('Lutar com a cobra [1]')
+                        print('Fugir da cobra [2]')
+                        choice6 = input(' ')
+                        print('')
+                        if choice6 == '1':
+                            print('Você tenta atacar, mas a cobra sente o poder do machado e foge!')
+                            print('Você continua seguindo sua jornada, mas encontra uma fonte de água brilhante.')
+                            print('')
+                            print('O que você faz?')
+                            print('Beber um pouco da água da fonte [1]')
+                            print('Seguir caminho e ignorar a maravilhosa fonte! [2]')
+                            choice7 = input(' ')
+                            print('')
+                            if choice7 == '1':
+                                print('Você bebe a água da fonte e continua a andar')
+                                print('Você caminha por mais 10 minutos e se transforma em pedra')
+                                print('Sua jornada termina aqui...')
+
+                                opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                                if opcao_func10 == '1':
+                                    continue
+                                elif opcao_func10 == '2':
+                                    break
+                                else:
+                                    print('Opção Inválida!')
+                            if choice7 == '2':
+                                print('Você anda mais um dia inteiro e acha uma tumba!')
+                                print('Você abre ela e encontra a Espada de Gabriel')
+                                print('Você segura a Espada e então você é teletransportado para o céu!')
+                                print(
+                                    'No céu, Gabriel diz a você que a Espada estava perdida a séculos e que você foi o primeiro a encontrá-la')
+                                print('Ele te concede um desejo e envia você devolta para casa!')
+                                print('Sua jornada termina aqui...')
+                                opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                                if opcao_func10 == '1':
+                                    continue
+                                elif opcao_func10 == '2':
+                                    break
+                                else:
+                                    print('Opção Inválida!')
+                            if choice6 == '2':
+                                print('Você anda mais um dia inteiro e acha uma tumba!')
+                                print('Você abre ela e encontra a Espada de Gabriel')
+                                print('Você segura a Espada e então você é teletransportado para o céu!')
+                                print('No céu, Gabriel diz a você que a Espada estava perdida a séculos e que você foi o primeiro a encontrá-la')
+                                print('Ele te concede um desejo e envia você devolta para casa!')
+                                print('Sua jornada termina aqui...')
+                                opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                                if opcao_func10 == '1':
+                                    continue
+                                elif opcao_func10 == '2':
+                                    break
+                                else:
+                                    print('Opção Inválida!')
+                        if choice6 == '2':
+                            print('Você se prepara para correr, mas a cobra sente o poder do seu machado e foge1')
+                            print('Você continua seguindo sua jornada, mas encontra uma fonte de água.')
+                            print('')
+                            print('O que você faz?')
+                            print('Beber um pouco da água da fonte [1]')
+                            print('Seguir caminho e ignorar a maravilhosa fonte! [2]')
+                            choice8 = input(' ')
+                            print('')
+                            print('')
+                            if choice8 == '1':
+                                print('Você bebe a água da fonte e continua a andar')
+                                print('Você caminha por mais 10 minutos e se transforma em pedra')
+                                print('Sua jornada termina aqui...')
+
+                                opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                                if opcao_func10 == '1':
+                                    continue
+                                elif opcao_func10 == '2':
+                                    break
+                                else:
+                                    print('Opção Inválida!')
+                            if choice8 == '2':
+                                print('Você anda mais um dia inteiro e acha uma tumba!')
+                                print('Você abre ela e encontra a Espada de Gabriel')
+                                print('Você segura a Espada e então você é teletransportado para o céu!')
+                                print('No céu, Gabriel diz a você que a Espada estava perdida a séculos e que você foi o primeiro a encontrá-la')
+                                print('Ele te concede um desejo e envia você devolta para casa!')
+                                print('Sua jornada termina aqui...')
+                                opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                                if opcao_func10 == '1':
+                                    continue
+                                elif opcao_func10 == '2':
+                                    break
+                                else:
+                                    print('Opção Inválida!')
+                    if choice4 == '2':
+                        print('Você anda por mais um tempo, até achar uma cabana')
+                        print('')
+                        print('O que você faz?')
+                        print('Entra na cabana [1]')
+                        print('Você segue seu caminho [2]')
+                        choice9 = input(' ')
+                        print('')
+                        if choice9 == '1':
+                            print('Você entra na cabana e logo de cara, você avista uma pedra bem grande!')
+                            print('')
+                            print('O que você faz?')
+                            print('Toca na pedra [1]')
+                            print('Sai da cabana e segue seu caminho [2]')
+                            choice10 = input(' ')
+                            print('')
+                            if choice10 == '1':
+                                print('Ao tocar na pedra, você é teletransportado para o céu')
+                                print('Lá, Gabriel e Deus, reconhecem, seu valor e te dão um desejo!')
+                                print('')
+                                desejo = input('Qual foi o seu desejo? ')
+                                print('')
+                                print('Eles ouvem atentamente, realizam o seu pedido e te mandam para casa!')
+                                opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                                if opcao_func10 == '1':
+                                    continue
+                                elif opcao_func10 == '2':
+                                    break
+                                else:
+                                    print('Opção Inválida!')
+                            if choice10 == '2':
+                                print('Você continua andando corajoso, mas logo encontra uma bruxa!!!')
+                                print('Sem tempo de reação, a bruxa lança um feitiço em você, te transformando em pó!')
+
+                                opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                                if opcao_func10 == '1':
+                                    continue
+                                elif opcao_func10 == '2':
+                                    break
+                                else:
+                                    print('Opção Inválida!')
+
+                        if choice9 == '2':
+                            print('Você continua andando corajoso, mas logo encontra uma bruxa!!!')
+                            print('Sem tempo de reação, a bruxa lança um feitiço em você, te transformando em pó!')
+                            opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                            if opcao_func10 == '1':
+                                continue
+                            elif opcao_func10 == '2':
+                                break
+                            else:
+                                print('Opção Inválida!')
+
+                if choice2 == '2':
+                    print('Você rapidamente encontra um leão, que te devora antes que você possa correr!')
+                    opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                    if opcao_func10 == '1':
+                        continue
+                    elif opcao_func10 == '2':
+                        break
+                    else:
+                        print('Opção Inválida!')
+
+
+            elif choice1 == '2':
+                print('Você continua a andar por mais um quilometro.')
+                print('Você chega a um empasse...')
+                print('Existem dois caminhos, um para a esquerda e outro para a direita!')
+                print('')
+                print('O que você faz?')
+                print('Seguir para a direita [1]')
+                print('Seguir para a esquerda [2]')
+                choice3 = input(' ')
+                print('')
+                if choice3 == '1':
+                    print('Ao seguir o caminho da direita, você se depara com uma cobra venenosa!!!')
+                    print('')
+                    print('O que você faz?')
+                    print('Lutar com a cobra [1]')
+                    print('Fugir da cobra como um covarde [2]')
+                    choice5 = input(' ')
+                    print('')
+                    if choice5 == '1':
+                        print('Você luta com a cobra, mas morre rapidamente')
+                        print('')
+
+                        opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                        if opcao_func10 == '1':
+                            continue
+                        elif opcao_func10 == '2':
+                            break
+                        else:
+                            print('Opção Inválida!')
+                    elif choice5 == '2':
+                        print('Você tenta correr, mas a cobra foi mais mais rápida!')
+                        print('')
+
+                        opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                        if opcao_func10 == '1':
+                            continue
+                        elif opcao_func10 == '2':
+                            break
+                        else:
+                            print('Opção Inválida!')
+                if choice3 == '2':
+                    print('Ao seguir o caminho da esquerda, você se depara com uma aranha gigante!!!')
+                    print('')
+                    print('O que você faz?')
+                    print('Lutar com a aranha [1]')
+                    print('Fugir dela como um covarde [2]')
+                    choice5 = input(' ')
+                    print('')
+                    if choice5 == '1':
+                        print('Você luta com a aranha, mas morre rapidamente')
+                        print('')
+
+                        opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                        if opcao_func10 == '1':
+                            continue
+                        elif opcao_func10 == '2':
+                            break
+                        else:
+                            print('Opção Inválida!')
+                    elif choice5 == '2':
+                        print('Você tenta correr, mas a aranha foi mais mais rápida!')
+                        print('')
+
+                        opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+                        if opcao_func10 == '1':
+                            continue
+                        elif opcao_func10 == '2':
+                            break
+                        else:
+                            print('Opção Inválida!')
+
+
+
+
+            opcao_func10 = input('Digite 1 para reiniciar e 2 para sair ')
+            if opcao_func10 == '1':
+                continue
+            elif opcao_func10 == '2':
+                break
+            else:
+                print('Opção Inválida!')
+
+    print('-'*70)
+    opcao_func_end = input('Digite 1 para recomeçar do ínicio e 2 para sair ')
+    if opcao_func_end == '1':
+        continue
+    elif opcao_func_end == '2':
+        break
+    else:
+        print('Opção Inválida!')
+
+
+    print('+-'*35)
+    end = input('Aperte ENTER para finalizar TUDO!')
+
+root.mainloop()
